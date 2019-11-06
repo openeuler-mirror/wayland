@@ -1,90 +1,73 @@
-Name:           wayland
-Version:        1.16.0
-Release:        1%{?dist}
-Summary:        Wayland Compositor Infrastructure
+Name:		wayland
+Version:	1.17.0
+Release:	1
+Summary:	Wayland Compositor Infrastructure
+License:	MIT
+URL:		http://wayland.freedesktop.org/
+Source0:	http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
-License:        MIT
-URL:            http://wayland.freedesktop.org/
-Source0:        http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
+BuildRequires:	gcc chrpath docbook-style-xsl doxygen expat-devel  
+BuildRequires:  libxml2-devel libxslt libffi-devel xmlto graphviz
 
-BuildRequires:  gcc
-BuildRequires:  chrpath
-BuildRequires:  docbook-style-xsl
-BuildRequires:  doxygen
-BuildRequires:  expat-devel
-BuildRequires:  graphviz
-BuildRequires:  libxml2-devel
-BuildRequires:  libxslt
-BuildRequires:  pkgconfig(libffi)
-BuildRequires:  xmlto
+Provides:       libwayland-client libwayland-cursor libwayland-egl
+Obsoletes:      libwayland-client libwayland-cursor libwayland-egl
 
-Provides:       libwayland-client
-Obsoletes:      libwayland-client
-
-Provides:       libwayland-cursor
-Obsoletes:      libwayland-cursor
-
-Provides:       libwayland-egl
-Obsoletes:      libwayland-egl
-
-Provides:       libwayland-server
-Obsoletes:      libwayland-server
-
-Provides:       mesa-libwayland-egl
-Obsoletes:      mesa-libwayland-egl
+Provides:       libwayland-server mesa-libwayland-egl
+Obsoletes:      libwayland-server mesa-libwayland-egl
 
 %description
-Wayland is a protocol for a compositor to talk to its clients as well as a C
-library implementation of that protocol. The compositor can be a standalone
-display server running on Linux kernel modesetting and evdev input devices,
-an X application, or a wayland client itself. The clients can be traditional
-applications, X servers (rootless or fullscreen) or other display servers.
+Wayland is a protocol for a compositor to talk to its clients as 
+well as a C library implementation of that protocol. The 
+compositor can be a standalone display server running on Linux 
+kernel modesetting and evdev input devices, an X application, or 
+a wayland client itself. The clients can be traditional 
+applications, X servers (rootless or fullscreen) or other display 
+servers.
+
+Part of the Wayland project is also the Weston reference 
+implementation of a Wayland compositor. Weston can run as an X 
+client or under Linux KMS and ships with a few demo clients. The 
+Weston compositor is a minimal and fast compositor and is 
+suitable for many embedded and mobile use cases.
 
 %package        devel
-Summary:        Development files for %{name}
-Requires:       libwayland-client
-Requires:       libwayland-cursor
-Requires:       libwayland-egl
-Requires:       libwayland-server
+Summary:        Header files for wayland
+Requires:       %{name} = %{version}-%{release}
 
-Provides:       libwayland-client-devel = %{version}-%{release}
-Obsoletes:      libwayland-client-devel < 1.11.91
-Provides:       libwayland-cursor-devel = %{version}-%{release}
-Obsoletes:      libwayland-cursor-devel < 1.11.91
-Provides:       libwayland-server-devel = %{version}-%{release}
-Obsoletes:      libwayland-server-devel < 1.11.91
+Provides:       libwayland-client-devel libwayland-cursor-devel
+Obsoletes:      libwayland-client-devel libwayland-cursor-devel
 
-Provides:       libwayland-egl-devel = %{version}-%{release}
-Provides:       mesa-libwayland-egl-devel = %{version}-%{release}
-Provides:       mesa-libwayland-egl-devel%{?_isa} = %{version}-%{release}
-Obsoletes:      mesa-libwayland-egl-devel < 18.1.0
+Provides:       libwayland-server-devel libwayland-egl-devel
+Obsoletes:      libwayland-server-devel libwayland-egl-devel
+
+Provides:       mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
+Obsoletes:      mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
 
 %description    devel
-The %{name}-devel package contains libraries and header files for
-developing applications that use %{name}.
+Header files for wayland.
 
-%package help
-Summary: Wayland development documentation
-BuildArch:  noarch
-Provides:   wayland-doc
-Obsoletes:  wayland-doc
+%package        help
+Summary:        Documents for wayland
+BuildArch:      noarch
+Requires:       man info
+Provides:       wayland-doc
+Obsoletes:      wayland-doc
 
-%description help
-Wayland development documentation
+%description    help 
+Man pages and other related documents for wayland
 
 %prep
-%autosetup -p1
+%autosetup -n %{name}-%{version} -p1
 
 %build
-%configure --disable-static --enable-documentation
-make %{?_smp_mflags}
+%configure  --enable-documentation
+%make_build
 
 %install
 %make_install
+%delete_la
 
-find $RPM_BUILD_ROOT -name \*.la | xargs rm -f
-
-chrpath -d $RPM_BUILD_ROOT%{_libdir}/libwayland-cursor.so
+chrpath -d %{buildroot}%{_libdir}/libwayland-cursor.so
 
 %check
 mkdir -m 700 tests/run
@@ -93,28 +76,31 @@ make check || \
 { rc=$?; cat test-suite.log; exit $rc; }
 
 %files
+%defattr(-,root,root)
 %license COPYING
-%{_libdir}/libwayland-client.so.0*
-%{_libdir}/libwayland-cursor.so.0*
-%{_libdir}/libwayland-egl.so.1*
-%{_libdir}/libwayland-server.so.0*
+%{_libdir}/libwayland-*.so.*
 
-%files devel
+%files          devel
+%defattr(-,root,root)
 %{_bindir}/wayland-scanner
-%{_includedir}/wayland-*.h
-%{_libdir}/pkgconfig/wayland-*.pc
 %{_libdir}/libwayland-*.so
-%{_datadir}/aclocal/wayland-scanner.m4
-%dir %{_datadir}/wayland
-%{_datadir}/wayland/wayland-scanner.mk
-%{_datadir}/wayland/wayland.xml
-%{_datadir}/wayland/wayland.dtd
-%{_mandir}/man3/*.3*
+%{_libdir}/pkgconfig/wayland-*.pc
+%{_includedir}/wayland-*.h
+%{_datadir}/wayland/*
+%{_datadir}/aclocal/*
 
-%files help
+%files          help
+%defattr(-,root,root)
 %doc README TODO
+%{_mandir}/man3/*
 %{_datadir}/doc/wayland/
 
 %changelog
+* Fri Oct 11 2019 openEuler Buildteam <buildteam@openeuler.org> - 1.17.0-1
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:update to 1.17.0
+
 * Thu Sep 12 2019 openEuler Buildteam <buildteam@openeuler.org> - 1:6.02-5
 - Package init
