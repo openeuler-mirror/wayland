@@ -1,6 +1,6 @@
 Name:		wayland
 Version:	1.17.0
-Release:	1
+Release:	2
 Summary:	Wayland Compositor Infrastructure
 License:	MIT
 URL:		http://wayland.freedesktop.org/
@@ -41,7 +41,7 @@ Provides:       libwayland-server-devel libwayland-egl-devel
 Obsoletes:      libwayland-server-devel libwayland-egl-devel
 
 Provides:       mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
-Obsoletes:      mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
+Obsoletes:      mesa-libwayland-egl-devel 
 
 %description    devel
 Header files for wayland.
@@ -96,6 +96,12 @@ make check || \
 %{_datadir}/doc/wayland/
 
 %changelog
+* Tue Jan 14 2020 openEuler Buildteam <buildteam@openeuler.org> - 1.17.0-2
+- Type:bugfix
+- Id:NA
+- SUG:NA
+- DESC:delete the isa in obsoletes
+
 * Fri Oct 11 2019 openEuler Buildteam <buildteam@openeuler.org> - 1.17.0-1
 - Type:bugfix
 - Id:NA
