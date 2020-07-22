@@ -1,13 +1,13 @@
 Name:		wayland
-Version:	1.17.0
-Release:	2
+Version:	1.18.0
+Release:	1
 Summary:	Wayland Compositor Infrastructure
 License:	MIT
 URL:		http://wayland.freedesktop.org/
 Source0:	http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires:	gcc chrpath docbook-style-xsl doxygen expat-devel  
-BuildRequires:  libxml2-devel libxslt libffi-devel xmlto graphviz
+BuildRequires:  libxml2-devel libxslt pkgconfig(libffi) xmlto graphviz
 
 Provides:       libwayland-client libwayland-cursor libwayland-egl
 Obsoletes:      libwayland-client libwayland-cursor libwayland-egl
@@ -31,36 +31,53 @@ Weston compositor is a minimal and fast compositor and is
 suitable for many embedded and mobile use cases.
 
 %package        devel
-Summary:        Header files for wayland
-Requires:       %{name} = %{version}-%{release}
-
-Provides:       libwayland-client-devel libwayland-cursor-devel
-Obsoletes:      libwayland-client-devel libwayland-cursor-devel
-
-Provides:       libwayland-server-devel libwayland-egl-devel
-Obsoletes:      libwayland-server-devel libwayland-egl-devel
-
-Provides:       mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
-Obsoletes:      mesa-libwayland-egl-devel 
+Summary:        Development files for %{name}
+Requires:       libwayland-client%{?_isa} = %{version}-%{release}
+Requires:       libwayland-cursor%{?_isa} = %{version}-%{release}
+Requires:       libwayland-egl%{?_isa} = %{version}-%{release}
+Requires:       libwayland-server%{?_isa} = %{version}-%{release}
+# For upgrade path from F24
+Provides:       libwayland-client-devel = %{version}-%{release}
+Provides:       libwayland-cursor-devel = %{version}-%{release}
+Provides:       libwayland-server-devel = %{version}-%{release}
+# For upgrade path from F27
+Provides:       libwayland-egl-devel = %{version}-%{release}
 
 %description    devel
-Header files for wayland.
+The %{name}-devel package contains libraries and header files for
+developing applications that use %{name}.
 
-%package        help
-Summary:        Documents for wayland
-BuildArch:      noarch
-Requires:       man info
-Provides:       wayland-doc
-Obsoletes:      wayland-doc
+%package doc
+Summary: Wayland development documentation
+BuildArch: noarch
+%description doc
+Wayland development documentation
 
-%description    help 
-Man pages and other related documents for wayland
+%package -n libwayland-client
+Summary: Wayland client library
+%description -n libwayland-client
+Wayland client library
+
+%package -n libwayland-cursor
+Summary: Wayland cursor library
+%description -n libwayland-cursor
+Wayland cursor library
+
+%package -n libwayland-egl
+Summary: Wayland egl library
+%description -n libwayland-egl
+Wayland egl library
+
+%package -n libwayland-server
+Summary: Wayland server library
+%description -n libwayland-server
+Wayland server library
 
 %prep
 %autosetup -n %{name}-%{version} -p1
 
 %build
-%configure  --enable-documentation
+%configure  --disable-static --enable-documentation
 %make_build
 
 %install
@@ -75,27 +92,44 @@ XDG_RUNTIME_DIR=$PWD/tests/run
 make check || \
 { rc=$?; cat test-suite.log; exit $rc; }
 
-%files
-%defattr(-,root,root)
-%license COPYING
-%{_libdir}/libwayland-*.so.*
 
-%files          devel
-%defattr(-,root,root)
+%files devel
 %{_bindir}/wayland-scanner
-%{_libdir}/libwayland-*.so
-%{_libdir}/pkgconfig/wayland-*.pc
 %{_includedir}/wayland-*.h
-%{_datadir}/wayland/*
-%{_datadir}/aclocal/*
+%{_libdir}/pkgconfig/wayland-*.pc
+%{_libdir}/libwayland-*.so
+%{_datadir}/aclocal/wayland-scanner.m4
+%dir %{_datadir}/wayland
+%{_datadir}/wayland/wayland-scanner.mk
+%{_datadir}/wayland/wayland.xml
+%{_datadir}/wayland/wayland.dtd
+%{_mandir}/man3/*.3*
 
-%files          help
-%defattr(-,root,root)
+%files doc
 %doc README TODO
-%{_mandir}/man3/*
 %{_datadir}/doc/wayland/
 
+%files -n libwayland-client
+%license COPYING
+%{_libdir}/libwayland-client.so.0*
+
+%files -n libwayland-cursor
+%license COPYING
+%{_libdir}/libwayland-cursor.so.0*
+
+%files -n libwayland-egl
+%license COPYING
+%{_libdir}/libwayland-egl.so.1*
+
+%files -n libwayland-server
+%license COPYING
+%{_libdir}/libwayland-server.so.0*
+
+
 %changelog
+* Fri Jul 17 2020 chengguipeng <chenguipeng1@huawei.com> - 1.18.0-1
+- upgrade to 1.18.0-1
+
 * Tue Jan 14 2020 openEuler Buildteam <buildteam@openeuler.org> - 1.17.0-2
 - Type:bugfix
 - Id:NA
