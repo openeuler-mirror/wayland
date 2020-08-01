@@ -9,11 +9,10 @@ Source0:	http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 BuildRequires:	gcc chrpath docbook-style-xsl doxygen expat-devel  
 BuildRequires:  libxml2-devel libxslt pkgconfig(libffi) xmlto graphviz
 
-Provides:       libwayland-client libwayland-cursor libwayland-egl
-Obsoletes:      libwayland-client libwayland-cursor libwayland-egl
-
-Provides:       libwayland-server mesa-libwayland-egl
-Obsoletes:      libwayland-server mesa-libwayland-egl
+Provides:       libwayland-client = %{version}-%{release} libwayland-cursor = %{version}-%{release}  
+Obsoletes:      libwayland-client < %{version}-%{release}  libwayland-cursor < %{version}-%{release}  
+Provides:       libwayland-egl = %{version}-%{release} libwayland-server = %{version}-%{release}  
+Obsoletes:      libwayland-egl < %{version}-%{release} libwayland-server < %{version}-%{release} 
 
 %description
 Wayland is a protocol for a compositor to talk to its clients as 
@@ -38,40 +37,20 @@ Requires:       libwayland-egl%{?_isa} = %{version}-%{release}
 Requires:       libwayland-server%{?_isa} = %{version}-%{release}
 # For upgrade path from F24
 Provides:       libwayland-client-devel = %{version}-%{release}
+Obsoletes:      libwayland-client-devel < %{version}-%{release}
 Provides:       libwayland-cursor-devel = %{version}-%{release}
+Obsoletes:      libwayland-cursor-devel < %{version}-%{release}
 Provides:       libwayland-server-devel = %{version}-%{release}
+Obsoletes:      libwayland-server-devel < %{version}-%{release}
 # For upgrade path from F27
 Provides:       libwayland-egl-devel = %{version}-%{release}
+Obsoletes:      libwayland-egl-devel < %{version}-%{release}
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
-%package doc
-Summary: Wayland development documentation
-BuildArch: noarch
-%description doc
-Wayland development documentation
-
-%package -n libwayland-client
-Summary: Wayland client library
-%description -n libwayland-client
-Wayland client library
-
-%package -n libwayland-cursor
-Summary: Wayland cursor library
-%description -n libwayland-cursor
-Wayland cursor library
-
-%package -n libwayland-egl
-Summary: Wayland egl library
-%description -n libwayland-egl
-Wayland egl library
-
-%package -n libwayland-server
-Summary: Wayland server library
-%description -n libwayland-server
-Wayland server library
+%package_help
 
 %prep
 %autosetup -n %{name}-%{version} -p1
@@ -92,6 +71,10 @@ XDG_RUNTIME_DIR=$PWD/tests/run
 make check || \
 { rc=$?; cat test-suite.log; exit $rc; }
 
+%files
+%defattr(-,root,root)
+%license COPYING
+%{_libdir}/libwayland-*.so.*
 
 %files devel
 %{_bindir}/wayland-scanner
@@ -103,27 +86,12 @@ make check || \
 %{_datadir}/wayland/wayland-scanner.mk
 %{_datadir}/wayland/wayland.xml
 %{_datadir}/wayland/wayland.dtd
-%{_mandir}/man3/*.3*
 
-%files doc
+%files help
+%defattr(-,root,root)
 %doc README TODO
+%{_mandir}/man3/*.3*
 %{_datadir}/doc/wayland/
-
-%files -n libwayland-client
-%license COPYING
-%{_libdir}/libwayland-client.so.0*
-
-%files -n libwayland-cursor
-%license COPYING
-%{_libdir}/libwayland-cursor.so.0*
-
-%files -n libwayland-egl
-%license COPYING
-%{_libdir}/libwayland-egl.so.1*
-
-%files -n libwayland-server
-%license COPYING
-%{_libdir}/libwayland-server.so.0*
 
 
 %changelog
