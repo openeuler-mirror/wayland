@@ -45,8 +45,8 @@ Obsoletes:      libwayland-server-devel < %{version}-%{release}
 # For upgrade path from F27
 Provides:       libwayland-egl-devel = %{version}-%{release}
 Obsoletes:      libwayland-egl-devel < %{version}-%{release}
-Provides:       mesa-libwayland-egl-devel = %{version}-%{release} mesa-libwayland-egl-devel%{?_isa} = %{version}-%{release}
-Obsoletes:      mesa-libwayland-egl-devel < %{version}-%{release} mesa-libwayland-egl-devel%{?_isa} < %{version}-%{release}
+Provides:       mesa-libwayland-egl-devel = %{version}-%{release} mesa-libwayland-egl-devel%{?_isa}
+Obsoletes:      mesa-libwayland-egl-devel < %{version}-%{release} 
 
 
 %description    devel
