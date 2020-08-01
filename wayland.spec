@@ -1,19 +1,18 @@
 Name:		wayland
-Version:	1.17.0
-Release:	2
+Version:	1.18.0
+Release:	1
 Summary:	Wayland Compositor Infrastructure
 License:	MIT
 URL:		http://wayland.freedesktop.org/
 Source0:	http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
 BuildRequires:	gcc chrpath docbook-style-xsl doxygen expat-devel  
-BuildRequires:  libxml2-devel libxslt libffi-devel xmlto graphviz
+BuildRequires:  libxml2-devel libxslt pkgconfig(libffi) xmlto graphviz
 
-Provides:       libwayland-client libwayland-cursor libwayland-egl
-Obsoletes:      libwayland-client libwayland-cursor libwayland-egl
-
-Provides:       libwayland-server mesa-libwayland-egl
-Obsoletes:      libwayland-server mesa-libwayland-egl
+Provides:       libwayland-client = %{version}-%{release} libwayland-cursor = %{version}-%{release}  
+Obsoletes:      libwayland-client < %{version}-%{release}  libwayland-cursor < %{version}-%{release}  
+Provides:       libwayland-egl = %{version}-%{release} libwayland-server = %{version}-%{release}  
+Obsoletes:      libwayland-egl < %{version}-%{release} libwayland-server < %{version}-%{release} 
 
 %description
 Wayland is a protocol for a compositor to talk to its clients as 
@@ -31,36 +30,36 @@ Weston compositor is a minimal and fast compositor and is
 suitable for many embedded and mobile use cases.
 
 %package        devel
-Summary:        Header files for wayland
-Requires:       %{name} = %{version}-%{release}
+Summary:        Development files for %{name}
+Requires:       libwayland-client = %{version}-%{release}
+Requires:       libwayland-cursor = %{version}-%{release}
+Requires:       libwayland-egl = %{version}-%{release}
+Requires:       libwayland-server = %{version}-%{release}
+# For upgrade path from F24
+Provides:       libwayland-client-devel = %{version}-%{release}
+Obsoletes:      libwayland-client-devel < %{version}-%{release}
+Provides:       libwayland-cursor-devel = %{version}-%{release}
+Obsoletes:      libwayland-cursor-devel < %{version}-%{release}
+Provides:       libwayland-server-devel = %{version}-%{release}
+Obsoletes:      libwayland-server-devel < %{version}-%{release}
+# For upgrade path from F27
+Provides:       libwayland-egl-devel = %{version}-%{release}
+Obsoletes:      libwayland-egl-devel < %{version}-%{release}
+Provides:       mesa-libwayland-egl-devel = %{version}-%{release} mesa-libwayland-egl-devel%{?_isa}
+Obsoletes:      mesa-libwayland-egl-devel < %{version}-%{release} 
 
-Provides:       libwayland-client-devel libwayland-cursor-devel
-Obsoletes:      libwayland-client-devel libwayland-cursor-devel
-
-Provides:       libwayland-server-devel libwayland-egl-devel
-Obsoletes:      libwayland-server-devel libwayland-egl-devel
-
-Provides:       mesa-libwayland-egl-devel mesa-libwayland-egl-devel%{?_isa}
-Obsoletes:      mesa-libwayland-egl-devel 
 
 %description    devel
-Header files for wayland.
+The %{name}-devel package contains libraries and header files for
+developing applications that use %{name}.
 
-%package        help
-Summary:        Documents for wayland
-BuildArch:      noarch
-Requires:       man info
-Provides:       wayland-doc
-Obsoletes:      wayland-doc
-
-%description    help 
-Man pages and other related documents for wayland
+%package_help
 
 %prep
 %autosetup -n %{name}-%{version} -p1
 
 %build
-%configure  --enable-documentation
+%configure  --disable-static --enable-documentation
 %make_build
 
 %install
@@ -80,22 +79,28 @@ make check || \
 %license COPYING
 %{_libdir}/libwayland-*.so.*
 
-%files          devel
-%defattr(-,root,root)
+%files devel
 %{_bindir}/wayland-scanner
-%{_libdir}/libwayland-*.so
-%{_libdir}/pkgconfig/wayland-*.pc
 %{_includedir}/wayland-*.h
-%{_datadir}/wayland/*
-%{_datadir}/aclocal/*
+%{_libdir}/pkgconfig/wayland-*.pc
+%{_libdir}/libwayland-*.so
+%{_datadir}/aclocal/wayland-scanner.m4
+%dir %{_datadir}/wayland
+%{_datadir}/wayland/wayland-scanner.mk
+%{_datadir}/wayland/wayland.xml
+%{_datadir}/wayland/wayland.dtd
 
-%files          help
+%files help
 %defattr(-,root,root)
 %doc README TODO
-%{_mandir}/man3/*
+%{_mandir}/man3/*.3*
 %{_datadir}/doc/wayland/
 
+
 %changelog
+* Fri Jul 17 2020 chengguipeng <chenguipeng1@huawei.com> - 1.18.0-1
+- upgrade to 1.18.0-1
+
 * Tue Jan 14 2020 openEuler Buildteam <buildteam@openeuler.org> - 1.17.0-2
 - Type:bugfix
 - Id:NA
