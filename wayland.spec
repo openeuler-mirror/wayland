@@ -31,10 +31,10 @@ suitable for many embedded and mobile use cases.
 
 %package        devel
 Summary:        Development files for %{name}
-Requires:       libwayland-client%{?_isa} = %{version}-%{release}
-Requires:       libwayland-cursor%{?_isa} = %{version}-%{release}
-Requires:       libwayland-egl%{?_isa} = %{version}-%{release}
-Requires:       libwayland-server%{?_isa} = %{version}-%{release}
+Requires:       libwayland-client = %{version}-%{release}
+Requires:       libwayland-cursor = %{version}-%{release}
+Requires:       libwayland-egl = %{version}-%{release}
+Requires:       libwayland-server = %{version}-%{release}
 # For upgrade path from F24
 Provides:       libwayland-client-devel = %{version}-%{release}
 Obsoletes:      libwayland-client-devel < %{version}-%{release}
@@ -45,6 +45,9 @@ Obsoletes:      libwayland-server-devel < %{version}-%{release}
 # For upgrade path from F27
 Provides:       libwayland-egl-devel = %{version}-%{release}
 Obsoletes:      libwayland-egl-devel < %{version}-%{release}
+Provides:       mesa-libwayland-egl-devel = %{version}-%{release} mesa-libwayland-egl-devel%{?_isa} = %{version}-%{release}
+Obsoletes:      mesa-libwayland-egl-devel < %{version}-%{release} mesa-libwayland-egl-devel%{?_isa} < %{version}-%{release}
+
 
 %description    devel
 The %{name}-devel package contains libraries and header files for
