@@ -1,13 +1,13 @@
 Name:		wayland
-Version:	1.18.0
+Version:	1.19.91
 Release:	1
 Summary:	Wayland Compositor Infrastructure
 License:	MIT
 URL:		http://wayland.freedesktop.org/
 Source0:	http://wayland.freedesktop.org/releases/%{name}-%{version}.tar.xz
 
-BuildRequires:	gcc chrpath docbook-style-xsl doxygen expat-devel  
-BuildRequires:  libxml2-devel libxslt pkgconfig(libffi) xmlto graphviz
+BuildRequires:  gcc gcc-c++ docbook-style-xsl doxygen expat-devel  
+BuildRequires:  libxml2-devel libxslt pkgconfig(libffi) xmlto graphviz meson
 
 Provides:       libwayland-client = %{version}-%{release} libwayland-cursor = %{version}-%{release}  
 Obsoletes:      libwayland-client < %{version}-%{release}  libwayland-cursor < %{version}-%{release}  
@@ -59,20 +59,14 @@ developing applications that use %{name}.
 %autosetup -n %{name}-%{version} -p1
 
 %build
-%configure  --disable-static --enable-documentation
-%make_build
+%meson
+%meson_build
 
 %install
-%make_install
-%delete_la
-
-chrpath -d %{buildroot}%{_libdir}/libwayland-cursor.so
+%meson_install
 
 %check
-mkdir -m 700 tests/run
-XDG_RUNTIME_DIR=$PWD/tests/run 
-make check || \
-{ rc=$?; cat test-suite.log; exit $rc; }
+%meson_test
 
 %files
 %defattr(-,root,root)
@@ -92,12 +86,15 @@ make check || \
 
 %files help
 %defattr(-,root,root)
-%doc README TODO
+%doc README
 %{_mandir}/man3/*.3*
 %{_datadir}/doc/wayland/
 
 
 %changelog
+* Sat Dec 04 2021 wangkerong <wangkerong@huawei.com> - 1.19.91-1
+- update to 1.19.91
+
 * Fri Jul 17 2020 chengguipeng <chenguipeng1@huawei.com> - 1.18.0-1
 - upgrade to 1.18.0-1
 
