@@ -1,6 +1,6 @@
 Name:		wayland
 Version:	1.19.91
-Release:	1
+Release:	2
 Summary:	Wayland Compositor Infrastructure
 License:	MIT
 URL:		http://wayland.freedesktop.org/
@@ -55,6 +55,16 @@ developing applications that use %{name}.
 
 %package_help
 
+%package -n libwayland-client
+Summary: Wayland client library
+%description -n libwayland-client
+Wayland client library
+
+%package -n libwayland-cursor
+Summary: Wayland cursor library
+%description -n libwayland-cursor
+Wayland cursor library
+
 %prep
 %autosetup -n %{name}-%{version} -p1
 
@@ -90,8 +100,18 @@ developing applications that use %{name}.
 %{_mandir}/man3/*.3*
 %{_datadir}/doc/wayland/
 
+%files -n libwayland-client
+%license COPYING
+%{_libdir}/libwayland-client.so.0*
+
+%files -n libwayland-cursor
+%license COPYING
+%{_libdir}/libwayland-cursor.so.0*
 
 %changelog
+* Fri Jan 28 2022 lvxiaoqian <xiaoqian@nj.iscas.ac.cn> - 1.19.91-2
+- add package libwayland-client and libwayland-cursor
+
 * Sat Dec 04 2021 wangkerong <wangkerong@huawei.com> - 1.19.91-1
 - update to 1.19.91
 
